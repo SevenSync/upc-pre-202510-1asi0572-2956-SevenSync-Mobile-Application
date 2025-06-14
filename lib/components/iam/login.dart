@@ -193,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                                     final hasProfile = profileData['hasProfile'] == true;
 
                                     if (hasProfile) {
-                                      Navigator.pushReplacementNamed(context, '/register');
+                                      Navigator.pushReplacementNamed(context, '/profile');
                                     } else {
                                       Navigator.pushReplacementNamed(context, '/create-profile');
                                     }

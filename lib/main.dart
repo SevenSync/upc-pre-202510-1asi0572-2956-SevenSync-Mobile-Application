@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:macetech_mobile_app/components/iam/create-profile.dart';
 import 'package:macetech_mobile_app/components/iam/password-recovery.dart';
 import 'package:macetech_mobile_app/components/iam/register.dart';
+import 'package:macetech_mobile_app/components/profiles/profile.dart';
 import 'components/iam/login.dart';
 import 'components/iam/recovery-sent.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/recover': (context) => const RecoverPasswordPage(),
         '/recovery-sent': (context) => const RecoveryEmailSentPage(),
         '/create-profile': (context) => const CreateProfilePage(),
+        '/profile': (context) => const ProfilePage(),
       },
     );
   }

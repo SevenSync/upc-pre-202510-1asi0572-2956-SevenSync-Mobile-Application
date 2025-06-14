@@ -203,6 +203,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Perfil creado con éxito')),
                                   );
+                                  Navigator.pushReplacementNamed(context, '/profile');
                                   // Navigator.pushReplacementNamed(context, '/home'); Ruta a perfil o inicio
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
