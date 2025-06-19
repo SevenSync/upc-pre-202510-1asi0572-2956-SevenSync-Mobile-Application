@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/application/usecases/change_password_usecase.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/application/usecases/delete_account_usecase.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/application/usecases/get_profile_usecase.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/application/usecases/sign_out_usecase.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/application/usecases/update_profile_usecase.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/infrastructure/implementations/profile_repository_impl.dart';
 import 'package:macetech_mobile_app/profiles_and_preferences/presentation/pages/profile.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/infrastructure/services/profile_api_service.dart';
 import 'iam/presentation/pages/create-profile.dart';
 import 'iam/presentation/pages/login.dart';
 import 'iam/presentation/pages/password-recovery.dart';
@@ -16,6 +23,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final apiService = ProfileApiService();
+    final repo = ProfileRepositoryImpl(apiService);
+
+    final getProfile = GetProfileUseCase(repo);
+    final signOut = SignOutUseCase(repo);
+    final deleteAccount = DeleteAccountUseCase(repo);
+    final updateProfile = UpdateProfileUseCase(repo);
+    final changePassword = ChangePasswordUseCase(repo);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Macetech Mobile App',
@@ -29,7 +45,13 @@ class MyApp extends StatelessWidget {
         '/recover': (context) => const RecoverPasswordPage(),
         '/recovery-sent': (context) => const RecoveryEmailSentPage(),
         '/create-profile': (context) => const CreateProfilePage(),
-        '/profile': (context) => const ProfilePage(),
+        '/profile': (context) => ProfilePage(
+          getProfile: getProfile,
+          signOut: signOut,
+          deleteAccount: deleteAccount,
+          updateProfile: updateProfile,
+          changePassword: changePassword,
+        ),
       },
     );
   }

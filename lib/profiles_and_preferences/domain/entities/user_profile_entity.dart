@@ -10,4 +10,18 @@ class UserProfileEntity {
     required this.phoneNumber,
     required this.address,
   });
+
+  UserProfileEntity copyWith({
+    String? fullName,
+    String? email,
+    String? phoneNumber,
+    String? address,
+  }) {
+    return UserProfileEntity(
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+    );
+  }
 }

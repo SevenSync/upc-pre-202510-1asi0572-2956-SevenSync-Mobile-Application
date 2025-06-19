@@ -1,11 +1,8 @@
 import '../../domain/repositories/profile_repository.dart';
 
 class DeleteAccountUseCase {
-  final ProfileRepository repository;
+  final ProfileRepository repo;
+  DeleteAccountUseCase(this.repo);
 
-  DeleteAccountUseCase(this.repository);
-
-  Future<bool> execute(String token) {
-    return repository.deleteAccount(token);
-  }
+  Future<void> call() => repo.deleteAccount();
 }

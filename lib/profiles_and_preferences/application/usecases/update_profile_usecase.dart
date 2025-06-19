@@ -1,11 +1,10 @@
+import 'package:macetech_mobile_app/profiles_and_preferences/domain/entities/user_profile_entity.dart';
+
 import '../../domain/repositories/profile_repository.dart';
 
 class UpdateProfileUseCase {
-  final ProfileRepository repository;
+  final ProfileRepository repo;
+  UpdateProfileUseCase(this.repo);
 
-  UpdateProfileUseCase(this.repository);
-
-  Future<bool> execute(Map<String, dynamic> data, String token) {
-    return repository.updateProfile(data, token);
-  }
+  Future<void> call(UserProfileEntity profile) => repo.updateProfile(profile);
 }

@@ -1,11 +1,8 @@
 import '../../domain/repositories/profile_repository.dart';
 
 class ChangePasswordUseCase {
-  final ProfileRepository repository;
+  final ProfileRepository repo;
+  ChangePasswordUseCase(this.repo);
 
-  ChangePasswordUseCase(this.repository);
-
-  Future<bool> execute(String newPassword, String token) {
-    return repository.changePassword(newPassword, token);
-  }
+  Future<void> call(String newPassword) => repo.changePassword(newPassword);
 }

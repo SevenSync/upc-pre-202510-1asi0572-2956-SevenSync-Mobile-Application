@@ -1,48 +1,54 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user_profile_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 
-class ProfileApiService implements ProfileRepository {
-  final _baseUrl = 'https://macetech.azurewebsites.net';
-
-  @override
-  Future<UserProfileEntity> getProfile(String token, String uid) async {
-    final profileResponse = await http.get(
-      Uri.parse('$_baseUrl/api/profiles/get'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    final userResponse = await http.get(
-      Uri.parse('$_baseUrl/api/users/$uid'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (profileResponse.statusCode == 200 && userResponse.statusCode == 200) {
-      final profile = jsonDecode(profileResponse.body);
-      final user = jsonDecode(userResponse.body);
-
-      return UserProfileEntity(
-        fullName: profile['fullName'] ?? '',
-        phoneNumber: profile['phoneNumber'] ?? '',
-        address: profile['streetAddress'] ?? '',
-        email: user['email'] ?? '',
-      );
-    } else {
-      throw Exception("No se pudo cargar el perfil");
-    }
+class ProfileApiService {
+  Future<String> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token') ?? '';
   }
 
-  @override
-  Future<bool> updateProfile(Map<String, dynamic> data, String token) async {
+  Future<String> _getUid() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('uid') ?? '';
+  }
+
+  Future<Map<String, dynamic>> fetchProfile() async {
+    final token = await _getToken();
+    final response = await http.get(
+      Uri.parse('https://macetech.azurewebsites.net/api/profiles/get'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) throw Exception('Error al obtener perfil');
+    return jsonDecode(response.body);
+  }
+
+  Future<String> fetchEmail() async {
+    final token = await _getToken();
+    final uid = await _getUid();
+    final response = await http.get(
+      Uri.parse('https://macetech.azurewebsites.net/api/users/$uid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode != 200) throw Exception('Error al obtener email');
+    final body = jsonDecode(response.body);
+    return body['email'] ?? '';
+  }
+
+  Future<void> updateProfile(Map<String, dynamic> data) async {
+    final token = await _getToken();
     final response = await http.put(
-      Uri.parse('$_baseUrl/api/profiles/update'),
+      Uri.parse('https://macetech.azurewebsites.net/api/profiles/update'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -50,37 +56,53 @@ class ProfileApiService implements ProfileRepository {
       body: jsonEncode(data),
     );
 
-    return response.statusCode == 200 || response.statusCode == 204;
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Error al actualizar perfil');
+    }
   }
 
-  @override
-  Future<bool> changePassword(String newPassword, String token) async {
+  Future<void> changePassword(String newPassword) async {
+    final token = await _getToken();
     final response = await http.post(
-      Uri.parse('$_baseUrl/api/users/change-password'),
+      Uri.parse('https://macetech.azurewebsites.net/api/users/change-password'),
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
       },
-      body: jsonEncode({'newPassword': newPassword}),
+      body: jsonEncode({ 'newPassword': newPassword }),
     );
 
-    return response.statusCode == 200;
+    if (response.statusCode != 200) throw Exception('Error al cambiar contraseña');
   }
 
-  @override
-  Future<bool> deleteAccount(String token) async {
+  Future<void> deleteAccount() async {
+    final token = await _getToken();
     final response = await http.delete(
-      Uri.parse('$_baseUrl/api/users/delete-account'),
+      Uri.parse('https://macetech.azurewebsites.net/api/users/delete-account'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
-    if (response.statusCode == 200 || response.statusCode == 204) {
-      final result = response.body.isNotEmpty ? jsonDecode(response.body) : {};
-      return result['deleted'] == true || response.statusCode == 204;
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Error al eliminar cuenta');
+    }
+  }
+
+  Future<void> signOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final response = await http.post(
+      Uri.parse('https://macetech.azurewebsites.net/api/users/sign-out'),
+      headers: { 'Authorization': 'Bearer $token' },
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Error al cerrar sesión');
     }
 
-    return false;
+    await prefs.clear();
   }
 }
+
