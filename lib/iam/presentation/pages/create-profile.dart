@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../application/usecases/create_profile_usecase.dart';
+import '../../domain/entities/user_profile_entity.dart';
+import '../../infrastructure/services/profile_api_service.dart';
+
 class CreateProfilePage extends StatefulWidget {
   const CreateProfilePage({super.key});
 
@@ -13,12 +17,71 @@ class CreateProfilePage extends StatefulWidget {
 
 class _CreateProfilePageState extends State<CreateProfilePage> {
   final _formKey = GlobalKey<FormState>();
-
   final nameController = TextEditingController();
   final lastNameController = TextEditingController();
   final addressController = TextEditingController();
   final countryCodeController = TextEditingController(text: '+51');
   final phoneNumberController = TextEditingController();
+
+  late final CreateProfileUseCase _createProfileUseCase;
+
+  @override
+  void initState() {
+    super.initState();
+    _createProfileUseCase = CreateProfileUseCase(ProfileApiService());
+  }
+
+  Future<void> _handleCreateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sesión no válida')),
+        );
+        return;
+      }
+
+      final addressParts = addressController.text.trim().split(',');
+      final streetAndNumber = addressParts[0].trim().split(' ');
+      final city = addressParts.length > 1 ? addressParts[1].trim() : '';
+      final postalCode = addressParts.length > 2 ? addressParts[2].trim() : '';
+
+      final number = streetAndNumber.isNotEmpty ? streetAndNumber.removeLast() : '';
+      final street = streetAndNumber.join(' ');
+
+      final profile = UserProfileEntity(
+        firstName: nameController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        street: street,
+        number: number,
+        city: city,
+        postalCode: postalCode,
+        country: "Perú",
+        countryCode: countryCodeController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
+      );
+
+      try {
+        final success = await _createProfileUseCase.execute(profile, token);
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Perfil creado con éxito')),
+          );
+          Navigator.pushReplacementNamed(context, '/profile');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo crear el perfil')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,77 +215,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2ECC71),
                         ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            try {
-                              final prefs = await SharedPreferences.getInstance();
-                              final token = prefs.getString('token');
-
-                              if (token == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Sesión no válida')),
-                                );
-                                return;
-                              }
-
-                              final addressParts = addressController.text.trim().split(',');
-                              final streetAndNumber = addressParts[0].trim().split(' ');
-                              final city = addressParts.length > 1 ? addressParts[1].trim() : '';
-                              final postalCode = addressParts.length > 2 ? addressParts[2].trim() : '';
-
-                              final number = streetAndNumber.isNotEmpty ? streetAndNumber.removeLast() : '';
-                              final street = streetAndNumber.join(' ');
-
-                              final url = Uri.parse('https://macetech.azurewebsites.net/api/profiles/create');
-
-                              final response = await http.post(
-                                url,
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                  'Authorization': 'Bearer $token',
-                                },
-                                body: jsonEncode({
-                                  "firstName": nameController.text.trim(),
-                                  "lastName": lastNameController.text.trim(),
-                                  "street": street,
-                                  "number": number,
-                                  "city": city,
-                                  "postalCode": postalCode,
-                                  "country": "Perú",
-                                  "countryCode": countryCodeController.text.trim(),
-                                  "phoneNumber": phoneNumberController.text.trim(),
-                                }),
-                              );
-
-                              debugPrint('Profile Creation Status: ${response.statusCode}');
-                              debugPrint('Body: ${response.body}');
-
-                              if (response.statusCode == 200) {
-                                final body = jsonDecode(response.body);
-                                if (body['created'] == true) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Perfil creado con éxito')),
-                                  );
-                                  Navigator.pushReplacementNamed(context, '/profile');
-                                  // Navigator.pushReplacementNamed(context, '/home'); Ruta a perfil o inicio
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('No se pudo crear el perfil')),
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: ${response.statusCode}')),
-                                );
-                              }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
-                              );
-                            }
-                          }
-                        },
-
+                        onPressed: _handleCreateProfile ,
                         child: const Text("Crear Perfil"),
                       ),
                     ),

@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../application/usecases/recover_password_usecase.dart';
+import '../../infrastructure/services/password_api_service.dart';
+
 class RecoverPasswordPage extends StatefulWidget {
   const RecoverPasswordPage({super.key});
 
@@ -13,11 +16,40 @@ class RecoverPasswordPage extends StatefulWidget {
 class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
   final emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late final RecoverPasswordUseCase _recoverPasswordUseCase;
+
+  @override
+  void initState() {
+    super.initState();
+    _recoverPasswordUseCase = RecoverPasswordUseCase(PasswordApiService());
+  }
+
+  Future<void> _handleRecovery() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final success = await _recoverPasswordUseCase.execute(emailController.text);
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Correo enviado correctamente')),
+          );
+          Navigator.pushNamed(context, '/recovery-sent');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo enviar el correo')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF), // blanco
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -46,7 +78,6 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                       style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     const SizedBox(height: 30),
-
                     const Text(
                       'Correo electrónico',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -59,14 +90,9 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'El correo es obligatorio';
-                        }
+                        if (value == null || value.isEmpty) return 'El correo es obligatorio';
                         final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        if (!emailRegex.hasMatch(value)) {
-                          return 'Formato de correo inválido';
-                        }
-                        return null;
+                        return emailRegex.hasMatch(value) ? null : 'Formato de correo inválido';
                       },
                     ),
                     const SizedBox(height: 30),
@@ -76,46 +102,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2ECC71),
                         ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              try {
-                                final url = Uri.parse('https://macetech.azurewebsites.net/api/users/password-recovery');
-
-                                final response = await http.patch(
-                                  url,
-                                  headers: {'Content-Type': 'application/json'},
-                                  body: jsonEncode({
-                                    'email': emailController.text.trim(),
-                                  }),
-                                );
-
-                                debugPrint('Status: ${response.statusCode}');
-                                debugPrint('Body: ${response.body}');
-
-                                if (response.statusCode == 200) {
-                                  final data = jsonDecode(response.body);
-                                  if (data['sent'] == true) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Correo enviado correctamente')),
-                                    );
-                                    Navigator.pushNamed(context, '/recovery-sent');
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('No se pudo enviar el correo')),
-                                    );
-                                  }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Error: ${response.statusCode}')),
-                                  );
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error de conexión: $e')),
-                                );
-                              }
-                            }
-                          },
+                        onPressed: _handleRecovery,
                         child: const Text("Siguiente"),
                       ),
                     ),

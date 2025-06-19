@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:macetech_mobile_app/components/iam/create-profile.dart';
-import 'package:macetech_mobile_app/components/iam/password-recovery.dart';
-import 'package:macetech_mobile_app/components/iam/register.dart';
-import 'package:macetech_mobile_app/components/profiles/profile.dart';
-import 'components/iam/login.dart';
-import 'components/iam/recovery-sent.dart';
+import 'package:macetech_mobile_app/profiles_and_preferences/presentation/pages/profile.dart';
+import 'iam/presentation/pages/create-profile.dart';
+import 'iam/presentation/pages/login.dart';
+import 'iam/presentation/pages/password-recovery.dart';
+import 'iam/presentation/pages/recovery-sent.dart';
+import 'iam/presentation/pages/register.dart';
 
 void main() {
   runApp(const MyApp());

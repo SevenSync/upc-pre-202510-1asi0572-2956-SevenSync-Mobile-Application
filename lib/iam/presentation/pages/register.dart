@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../application/usecases/register_user_usecase.dart';
+import '../../infrastructure/services/user_api_service.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -18,6 +21,39 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  late final RegisterUserUseCase _registerUserUseCase;
+
+  @override
+  void initState() {
+    super.initState();
+    _registerUserUseCase = RegisterUserUseCase(UserApiService()); // CAMBIO
+  }
+
+  Future<void> _handleRegister() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final success = await _registerUserUseCase.execute(
+          emailController.text,
+          passwordController.text,
+        );
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cuenta creada con éxito')),
+          );
+          Navigator.pushNamed(context, '/login');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo crear la cuenta')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,40 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2ECC71),
                         ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final url = Uri.parse('https://macetech.azurewebsites.net/api/users/sign-up');
-
-                            final response = await http.post(
-                              url,
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: jsonEncode({
-                                'email': emailController.text.trim(),
-                                'password': passwordController.text.trim(),
-                              }),
-                            );
-
-                            if (response.statusCode == 200) {
-                              final body = jsonDecode(response.body);
-                              if (body['created'] == true) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Cuenta creada con éxito')),
-                                );
-                                Navigator.pushNamed(context, '/login');
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('No se pudo crear la cuenta')),
-                                );
-                              }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error del servidor: ${response.statusCode}')),
-                              );
-                            }
-                          }
-                        },
+                        onPressed: _handleRegister,
                         child: const Text("Registrarse"),
                       ),
                     ),
