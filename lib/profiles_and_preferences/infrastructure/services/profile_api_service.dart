@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user_profile_entity.dart';
-import '../../domain/repositories/profile_repository.dart';
+import '../../domain/interfaces/profile_repository.dart';
 
 class ProfileApiService {
   Future<String> _getToken() async {

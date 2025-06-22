@@ -1,5 +1,5 @@
 import '../../domain/value_objects/email_vo.dart';
-import '../../domain/repositories/password_repository.dart';
+import '../../domain/interfaces/password_repository.dart';
 
 class RecoverPasswordUseCase {
   final PasswordRepository repository;

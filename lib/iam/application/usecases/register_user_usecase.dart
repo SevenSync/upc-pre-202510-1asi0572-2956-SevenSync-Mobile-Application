@@ -1,5 +1,5 @@
 import '../../domain/entities/user_entity.dart';
-import '../../domain/repositories/user_repository.dart';
+import '../../domain/interfaces/user_repository.dart';
 
 class RegisterUserUseCase {
   final UserRepository repository;

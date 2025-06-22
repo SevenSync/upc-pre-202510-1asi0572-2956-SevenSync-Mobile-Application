@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../domain/repositories/password_repository.dart';
+import '../../domain/interfaces/password_repository.dart';
 import '../../domain/value_objects/email_vo.dart';
 
 class PasswordApiService implements PasswordRepository {

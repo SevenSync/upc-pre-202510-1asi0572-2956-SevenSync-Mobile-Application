@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/user_credentials_entity.dart';
-import '../../domain/repositories/auth_repository.dart';
+import '../../domain/interfaces/auth_repository.dart';
 
 class AuthApiService implements AuthRepository {
   final String _baseUrl = 'https://macetech.azurewebsites.net';

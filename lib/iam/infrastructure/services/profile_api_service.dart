@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../domain/entities/user_profile_entity.dart';
-import '../../domain/repositories/profile_repository.dart';
+import '../../domain/interfaces/profile_repository.dart';
 
 class ProfileApiService implements ProfileRepository {
   final String _baseUrl = 'https://macetech.azurewebsites.net';

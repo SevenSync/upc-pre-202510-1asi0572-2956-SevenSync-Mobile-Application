@@ -1,5 +1,5 @@
 import 'package:macetech_mobile_app/profiles_and_preferences/domain/entities/user_profile_entity.dart';
-import '../../domain/repositories/profile_repository.dart';
+import '../../domain/interfaces/profile_repository.dart';
 import '../services/profile_api_service.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
