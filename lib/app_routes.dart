@@ -4,6 +4,7 @@ import 'package:macetech_mobile_app/iam/presentation/pages/login.dart';
 import 'package:macetech_mobile_app/iam/presentation/pages/password-recovery.dart';
 import 'package:macetech_mobile_app/iam/presentation/pages/recovery-sent.dart';
 import 'package:macetech_mobile_app/iam/presentation/pages/register.dart';
+import 'package:macetech_mobile_app/pots/pages/pots.dart';
 import 'package:macetech_mobile_app/profiles_and_preferences/presentation/pages/profile.dart';
 import 'injections.dart'; 
 
@@ -15,6 +16,7 @@ class AppRoutes {
   static const String recoverySent = '/recovery-sent';
   static const String createProfile = '/create-profile';
   static const String profile = '/profile';
+  static const String pot = '/pot';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -37,6 +39,10 @@ class AppRoutes {
             updateProfile: getIt(),
             changePassword: getIt(),
           ),
+        );
+      case pot:
+        return MaterialPageRoute(
+          builder: (_) => const PotsPage(),
         );
       default:
         return MaterialPageRoute(

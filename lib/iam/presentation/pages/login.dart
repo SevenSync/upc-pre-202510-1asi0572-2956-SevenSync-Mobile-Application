@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
         final hasProfile = await _signInUserUseCase.checkIfUserHasProfile(token);
 
         if (hasProfile) {
-          Navigator.pushReplacementNamed(context, '/profile');
+          Navigator.pushReplacementNamed(context, '/pot');
         } else {
           Navigator.pushReplacementNamed(context, '/create-profile');
         }

@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:macetech_mobile_app/profiles_and_preferences/domain/entities/user_profile_entity.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:macetech_mobile_app/common/widgets/navbar/app_bottom_nav_bar.dart';
 
+import '../../../l10n/app_localizations.dart';
+import '../../../main.dart';
 import '../../application/usecases/change_password_usecase.dart';
 import '../../application/usecases/delete_account_usecase.dart';
 import '../../application/usecases/get_profile_usecase.dart';
@@ -42,9 +41,13 @@ class _ProfilePageState extends State<ProfilePage> {
   bool weeklyReports = false;
   bool emailNotifications = false;
 
+  String _lang = 'en';
+  late AppLocalizations loc;
+
   @override
   void initState() {
     super.initState();
+    loc = AppLocalizations.of(context)!;
     loadProfile();
   }
 
@@ -69,14 +72,14 @@ class _ProfilePageState extends State<ProfilePage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("¿Estás seguro?"),
-        content: const Text("Esta acción eliminará tu cuenta de forma permanente."),
+        title: Text(loc.profileDeleteAccount),
+        content: Text(loc.profileDeleteAccountConfirmationDescription),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancelar")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(loc.profileDeleteAccountConfirmationNo)),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text("Eliminar"),
+            child: Text(loc.profileDeleteAccountConfirmationYes),
           ),
         ],
       ),
@@ -88,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!context.mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Cuenta eliminada con éxito")),
+        SnackBar(content: Text(loc.profileDeleteAccountSuccessTitle)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -120,17 +123,52 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF3EF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text("Mi Perfil", style: TextStyle(color: Colors.black)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(context, '/pot', (route) => false,);
+          },
+        ),
+        title: Text(loc.profileTitle, style: const TextStyle(color: Colors.black)),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: ToggleButtons(
+              borderRadius: BorderRadius.circular(20),
+              borderColor: Colors.transparent,
+              selectedBorderColor: Colors.green,
+              fillColor: Colors.green.withOpacity(0.1),
+              isSelected: [ _lang=='en', _lang=='es' ],
+              onPressed: (index) {
+                final newLang = index == 0 ? 'en' : 'es';
+                final newLocale = Locale(newLang);
+
+                setState(() => _lang = newLang);
+                MyApp.setLocale(context, newLocale);
+              },
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('En'),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('Es'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: ValueListenableBuilder<UserProfileEntity?>(
         valueListenable: _profileNotifier,
@@ -347,15 +385,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ],
                                     ),
                                   ),
-                                  ElevatedButton.icon(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white),
-                                    label: const Text("Actualizar"),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.amber.shade600,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -418,14 +447,7 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.local_florist), label: 'Macetas'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications_none), label: 'Notificaciones'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
-        ],
-      ),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2)
     );
   }
 
