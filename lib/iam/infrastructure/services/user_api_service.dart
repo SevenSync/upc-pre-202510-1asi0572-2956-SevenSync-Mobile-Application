@@ -8,7 +8,7 @@ class UserApiService implements UserRepository {
 
   @override
   Future<bool> register(UserEntity user) async {
-    final url = Uri.parse('$_baseUrl/api/users/sign-up');
+    final url = Uri.parse('$_baseUrl/api/v1/auth/register');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

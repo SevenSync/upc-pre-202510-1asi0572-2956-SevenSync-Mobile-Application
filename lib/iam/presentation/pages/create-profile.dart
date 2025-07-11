@@ -55,7 +55,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
         firstName: nameController.text.trim(),
         lastName: lastNameController.text.trim(),
         street: street,
-        number: number,
+        buildingNumber: number,
         city: city,
         postalCode: postalCode,
         country: "Perú",

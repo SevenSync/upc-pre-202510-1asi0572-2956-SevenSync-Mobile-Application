@@ -2,7 +2,7 @@ class UserProfileEntity {
   final String firstName;
   final String lastName;
   final String street;
-  final String number;
+  final String buildingNumber;
   final String city;
   final String postalCode;
   final String country;
@@ -13,7 +13,7 @@ class UserProfileEntity {
     required this.firstName,
     required this.lastName,
     required this.street,
-    required this.number,
+    required this.buildingNumber,
     required this.city,
     required this.postalCode,
     required this.country,
@@ -25,7 +25,7 @@ class UserProfileEntity {
     "firstName": firstName,
     "lastName": lastName,
     "street": street,
-    "number": number,
+    "buildingNumber": buildingNumber,
     "city": city,
     "postalCode": postalCode,
     "country": country,
