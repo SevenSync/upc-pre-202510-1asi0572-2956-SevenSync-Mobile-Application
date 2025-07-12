@@ -81,6 +81,19 @@
   "potsPotCardSoilMoisture": "Humedad del suelo",
   "potsPotCardEnvironmentLight": "Luz",
   "potsPotCardDetails": "Ver detalles",
+  "potsNeedsWater": "Necesita riego",
+
+  "potLinkTitle": "Vincula tu maceta",
+  "potLinkName": "Nombre",
+  "potLinkLocation": "Ubicación",
+  "potLinkIdentifier": "Identificador de la maceta",
+  "potLinkButton": "Vincular maceta",
+  "potLinkSuccess": "Vinculación exitosa ",
+  "potLinkFailure": "No se pudo vincular la maceta ",
+  "fieldRequired": "Este campo no puede estar vacío",
+
+
+
   "profileTitle": "Mi perfil",
   "profileActiveMemberSince": "Miembro activo desde: ",
   "profileOwnedPots": " maceta(s) registrada(s)",

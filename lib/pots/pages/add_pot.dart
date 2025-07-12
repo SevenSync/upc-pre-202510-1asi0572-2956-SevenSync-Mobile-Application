@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
+import '../../../main.dart'; // Para MyApp.setLocale
 
-/// Pantalla “Vincula tu maceta”
-/// Se abre desde el botón “Añadir maceta” y, cuando el backend confirma
-/// la creación, hace `Navigator.pop(context)` mostrando un SnackBar de éxito.
 class AddPotPage extends StatefulWidget {
   const AddPotPage({super.key});
 
@@ -16,6 +15,7 @@ class _AddPotPageState extends State<AddPotPage> {
   final _locationCtrl = TextEditingController();
   final _idCtrl = TextEditingController();
   bool _loading = false;
+  String _lang = 'en';
 
   @override
   void dispose() {
@@ -25,47 +25,57 @@ class _AddPotPageState extends State<AddPotPage> {
     super.dispose();
   }
 
-  /* ------------------------------------------------------------------ */
-  /*                             ENVÍO                                  */
-  /* ------------------------------------------------------------------ */
+  Widget _languageToggle() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: ToggleButtons(
+        borderRadius: BorderRadius.circular(20),
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.green,
+        fillColor: Colors.green.withOpacity(0.1),
+        isSelected: [_lang == 'en', _lang == 'es'],
+        onPressed: (index) {
+          final newLang = index == 0 ? 'en' : 'es';
+          final newLocale = Locale(newLang);
+          setState(() => _lang = newLang);
+          MyApp.setLocale(context, newLocale);
+        },
+        children: const [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('En')),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Es')),
+        ],
+      ),
+    );
+  }
+
   Future<void> _submit() async {
-    // Valida formulario
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _loading = true);
 
-    // ⇢ Simulación de llamada a tu backend (reemplázala por la real) ⚙️
     await Future.delayed(const Duration(seconds: 2));
-    final bool ok = true; // ← respuesta simulada
-    // ------------------------------------------------------------------
+    final bool ok = true;
 
     if (!mounted) return;
 
     setState(() => _loading = false);
 
-    if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vinculación exitosa ✅'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      Navigator.pop(context); // vuelve a la lista
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo vincular la maceta ❌'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+    final loc = AppLocalizations.of(context)!;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(ok ? loc.potLinkSuccess : loc.potLinkFailure),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    if (ok) Navigator.pop(context);
   }
 
-  /* ------------------------------------------------------------------ */
-  /*                              UI                                    */
-  /* ------------------------------------------------------------------ */
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -74,7 +84,7 @@ class _AddPotPageState extends State<AddPotPage> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  /// ENCABEZADO (flecha + título centrado)
+                  _languageToggle(),
                   Row(
                     children: [
                       IconButton(
@@ -83,63 +93,43 @@ class _AddPotPageState extends State<AddPotPage> {
                       ),
                       Expanded(
                         child: Text(
-                          'Vincula tu maceta',
+                          loc.potLinkTitle,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(width: 48), // simula espacio del IconButton
+                      const SizedBox(width: 48),
                     ],
                   ),
                   const SizedBox(height: 24),
-
-                  /// ICONO GRANDE
                   const Icon(Icons.local_florist, size: 140, color: Colors.grey),
                   const SizedBox(height: 32),
-
-                  /// FORMULARIO
                   Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _label('Nombre'),
-                        _input(
-                          controller: _nameCtrl,
-                          validator: _requiredValidator,
-                        ),
+                        _label(loc.potLinkName),
+                        _input(controller: _nameCtrl, validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        _label('Ubicación'),
-                        _input(
-                          controller: _locationCtrl,
-                          validator: _requiredValidator,
-                        ),
+                        _label(loc.potLinkLocation),
+                        _input(controller: _locationCtrl, validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        _label('Identificador de la maceta'),
-                        _input(
-                          controller: _idCtrl,
-                          validator: _requiredValidator,
-                        ),
+                        _label(loc.potLinkIdentifier),
+                        _input(controller: _idCtrl, validator: _requiredValidator),
                         const SizedBox(height: 32),
-
-                        /// BOTÓN VINCULAR
                         SizedBox(
                           height: 48,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                             onPressed: _loading ? null : _submit,
                             child: _loading
                                 ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 3, color: Colors.white),
+                              child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
                             )
-                                : const Text('Vincular maceta'),
+                                : Text(loc.potLinkButton),
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -155,16 +145,15 @@ class _AddPotPageState extends State<AddPotPage> {
     );
   }
 
-  /* -------------------------- HELPERS UI ---------------------------- */
-  Widget _label(String text) => Text(text,
-      style: Theme.of(context)
-          .textTheme
-          .bodyLarge
-          ?.copyWith(fontWeight: FontWeight.bold));
+  Widget _label(String text) => Text(
+    text,
+    style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+  );
 
-  Widget _input(
-      {required TextEditingController controller,
-        required FormFieldValidator<String> validator}) {
+  Widget _input({
+    required TextEditingController controller,
+    required FormFieldValidator<String> validator,
+  }) {
     return TextFormField(
       controller: controller,
       validator: validator,
@@ -175,21 +164,8 @@ class _AddPotPageState extends State<AddPotPage> {
     );
   }
 
-  /// Validador genérico “campo obligatorio”
-  String? _requiredValidator(String? value) =>
-      (value == null || value.trim().isEmpty)
-          ? 'Este campo no puede estar vacío'
-          : null;
+  String? _requiredValidator(String? value) {
+    final loc = AppLocalizations.of(context)!;
+    return (value == null || value.trim().isEmpty) ? loc.fieldRequired : null;
+  }
 }
-
-/* -------------------------------------------------------------------- */
-/*               EJEMPLO DE USO RÁPIDO / TEST MANUAL                    */
-/* -------------------------------------------------------------------- */
-/*
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: AddPotPage(),
-  ));
-}
-*/

@@ -241,6 +241,33 @@ class AppLocalizationsEs extends AppLocalizations {
   String get potsPotCardDetails => 'Ver detalles';
 
   @override
+  String get potsNeedsWater => 'Necesita riego';
+
+  @override
+  String get potLinkTitle => 'Vincula tu maceta';
+
+  @override
+  String get potLinkName => 'Nombre';
+
+  @override
+  String get potLinkLocation => 'Ubicación';
+
+  @override
+  String get potLinkIdentifier => 'Identificador de la maceta';
+
+  @override
+  String get potLinkButton => 'Vincular maceta';
+
+  @override
+  String get potLinkSuccess => 'Vinculación exitosa ';
+
+  @override
+  String get potLinkFailure => 'No se pudo vincular la maceta ';
+
+  @override
+  String get fieldRequired => 'Este campo no puede estar vacío';
+
+  @override
   String get profileTitle => 'Mi perfil';
 
   @override

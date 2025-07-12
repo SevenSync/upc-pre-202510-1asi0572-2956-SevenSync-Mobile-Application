@@ -239,6 +239,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get potsPotCardDetails => 'View details';
 
   @override
+  String get potsNeedsWater => 'Watering needed';
+
+  @override
+  String get potLinkTitle => 'Link your pot';
+
+  @override
+  String get potLinkName => 'Name';
+
+  @override
+  String get potLinkLocation => 'Location';
+
+  @override
+  String get potLinkIdentifier => 'Pot Identifier';
+
+  @override
+  String get potLinkButton => 'Link pot';
+
+  @override
+  String get potLinkSuccess => 'Successfully linked ';
+
+  @override
+  String get potLinkFailure => 'Could not link the pot ';
+
+  @override
+  String get fieldRequired => 'This field can\'t be empty';
+
+  @override
   String get profileTitle => 'My profile';
 
   @override

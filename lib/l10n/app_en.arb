@@ -79,6 +79,17 @@
   "potsPotCardSoilMoisture": "Soil moisture",
   "potsPotCardEnvironmentLight": "Light",
   "potsPotCardDetails": "View details",
+  "potsNeedsWater": "Watering needed",
+
+  "potLinkTitle": "Link your pot",
+  "potLinkName": "Name",
+  "potLinkLocation": "Location",
+  "potLinkIdentifier": "Pot Identifier",
+  "potLinkButton": "Link pot",
+  "potLinkSuccess": "Successfully linked ",
+  "potLinkFailure": "Could not link the pot ",
+  "fieldRequired": "This field can't be empty",
+
 
   "profileTitle": "My profile",
   "profileActiveMemberSince": "Active member since: ",

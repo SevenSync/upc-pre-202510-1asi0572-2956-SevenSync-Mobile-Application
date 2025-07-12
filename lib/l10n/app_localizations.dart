@@ -536,6 +536,60 @@ abstract class AppLocalizations {
   /// **'View details'**
   String get potsPotCardDetails;
 
+  /// No description provided for @potsNeedsWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Watering needed'**
+  String get potsNeedsWater;
+
+  /// No description provided for @potLinkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link your pot'**
+  String get potLinkTitle;
+
+  /// No description provided for @potLinkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get potLinkName;
+
+  /// No description provided for @potLinkLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get potLinkLocation;
+
+  /// No description provided for @potLinkIdentifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Pot Identifier'**
+  String get potLinkIdentifier;
+
+  /// No description provided for @potLinkButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Link pot'**
+  String get potLinkButton;
+
+  /// No description provided for @potLinkSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully linked '**
+  String get potLinkSuccess;
+
+  /// No description provided for @potLinkFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not link the pot '**
+  String get potLinkFailure;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field can\'t be empty'**
+  String get fieldRequired;
+
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
