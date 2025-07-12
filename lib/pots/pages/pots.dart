@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../app_routes.dart';
 import '../../common/widgets/navbar/app_bottom_nav_bar.dart';
+import 'add_pot.dart';
 
 class PotsPage extends StatelessWidget {
   const PotsPage({super.key});
@@ -99,6 +101,7 @@ class PlantPot {
     this.needsWater = false,
     this.imageUrl,
   });
+
 }
 
 /// Card representing a single plant pot.
@@ -181,7 +184,11 @@ class PlantPotCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context, AppRoutes.potInfo, arguments: pot,
+                        );
+                      },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.green.shade700),
                       ),
@@ -269,7 +276,10 @@ class AddPotCard extends StatelessWidget {
           width: 200,
           child: OutlinedButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const _DummyAddPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddPotPage()),
+              );
             },
             style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.green.shade700)),
             child: const Text('Añadir maceta'),
