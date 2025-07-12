@@ -47,8 +47,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    loc = AppLocalizations.of(context)!;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => loadProfile());
     loadProfile();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loc = AppLocalizations.of(context)!;
   }
 
   Future<void> loadProfile() async {
