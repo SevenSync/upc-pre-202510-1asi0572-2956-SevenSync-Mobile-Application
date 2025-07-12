@@ -84,6 +84,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get registerSuccessTitle => '¡Registro exitoso!';
 
   @override
+  String get registerFailedTitle => 'Registro fallido!';
+
+  @override
   String get registerLoginOption => '¿Ya tienes una cuenta? ';
 
   @override
@@ -118,6 +121,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get passwordResetSuccessSubtitle =>
       'Por favor revisa tu correo para restablecer tu contraseña. El enlace expirará en 24 horas.';
+
+  @override
+  String get passwordResetConfirmationTitle => 'Entendido';
 
   @override
   String get createProfileTitle => 'Crear perfil';

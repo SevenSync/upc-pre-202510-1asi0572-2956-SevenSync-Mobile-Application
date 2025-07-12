@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
+import '../../../l10n/app_localizations.dart';
 import '../../application/usecases/register_user_usecase.dart';
 import '../../infrastructure/services/user_api_service.dart';
+import '../../../main.dart'; // para usar MyApp.setLocale
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -21,13 +19,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String _lang = 'en';
 
   late final RegisterUserUseCase _registerUserUseCase;
 
   @override
   void initState() {
     super.initState();
-    _registerUserUseCase = RegisterUserUseCase(UserApiService()); // CAMBIO
+    _registerUserUseCase = RegisterUserUseCase(UserApiService());
   }
 
   Future<void> _handleRegister() async {
@@ -39,12 +38,12 @@ class _RegisterPageState extends State<RegisterPage> {
         );
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cuenta creada con éxito')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.registerSuccessTitle)),
           );
           Navigator.pushNamed(context, '/login');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No se pudo crear la cuenta')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.registerFailedTitle)),
           );
         }
       } catch (e) {
@@ -55,8 +54,34 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  Widget _languageToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ToggleButtons(
+        borderRadius: BorderRadius.circular(20),
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.green,
+        fillColor: Colors.green.withOpacity(0.1),
+        isSelected: [_lang == 'en', _lang == 'es'],
+        onPressed: (index) {
+          final newLang = index == 0 ? 'en' : 'es';
+          final newLocale = Locale(newLang);
+
+          setState(() => _lang = newLang);
+          MyApp.setLocale(context, newLocale);
+        },
+        children: const [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('En')),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Es')),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF3EF),
       body: SafeArea(
@@ -65,61 +90,50 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Center(
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey, // envolvemos en un formulario
+                key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _languageToggle(),
                     const Icon(Icons.account_circle_outlined, size: 80),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Crear una cuenta",
+                    Text(
+                      loc.registerTitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF296244),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Ingresa tus datos para registrarte en la plataforma",
+                    Text(
+                      loc.registerSubtitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     const SizedBox(height: 30),
 
-                    // Email
-                    const Text(
-                      'Correo electrónico',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    Text(loc.loginEmailLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: emailController,
-                      decoration: const InputDecoration(
-                        hintText: 'ejemplo@correo.com',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: loc.registerEmailLabelExample,
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'El correo es obligatorio';
-                        }
+                        if (value == null || value.isEmpty) return loc.registerEmailMandatory;
                         final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        if (!emailRegex.hasMatch(value)) {
-                          return 'Formato de correo inválido';
-                        }
-                        return null;
+                        return emailRegex.hasMatch(value)
+                            ? null
+                            : loc.loginEmailInvalid;
                       },
                     ),
 
                     const SizedBox(height: 20),
-
-                    // Contraseña
-                    const Text(
-                      'Contraseña',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    Text(loc.loginPasswordLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: passwordController,
@@ -127,34 +141,19 @@ class _RegisterPageState extends State<RegisterPage> {
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
+                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'La contraseña es obligatoria';
-                        }
-                        if (value.length < 8) {
-                          return 'Mínimo 8 caracteres';
-                        }
+                        if (value == null || value.isEmpty) return loc.registerPasswordMandatory;
+                        if (value.length < 8) return loc.registerPasswordInvalid;
                         return null;
                       },
                     ),
 
                     const SizedBox(height: 20),
-
-                    // Confirmar contraseña
-                    const Text(
-                      'Confirmar contraseña',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    Text(loc.registerPasswordConfirmLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: confirmPasswordController,
@@ -163,31 +162,20 @@ class _RegisterPageState extends State<RegisterPage> {
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
-                            });
-                          },
+                          onPressed: () =>
+                              setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Confirma la contraseña';
-                        }
-                        if (value != passwordController.text) {
-                          return 'Las contraseñas no coinciden';
-                        }
+                        if (value == null || value.isEmpty) return loc.registerPasswordConfirmMandatory;
+                        if (value != passwordController.text) return loc.registerPasswordConfirmMandatory;
                         return null;
                       },
                     ),
 
                     const SizedBox(height: 30),
-
-                    // Botón
                     SizedBox(
                       height: 50,
                       child: ElevatedButton(
@@ -195,29 +183,26 @@ class _RegisterPageState extends State<RegisterPage> {
                           backgroundColor: const Color(0xFF2ECC71),
                         ),
                         onPressed: _handleRegister,
-                        child: const Text("Registrarse"),
+                        child: Text(loc.registerButton),
                       ),
                     ),
 
                     const SizedBox(height: 20),
-
-                    // Ya tienes cuenta
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("¿Ya tienes una cuenta? "),
+                        Text(loc.registerLoginOption),
+                        const SizedBox(width: 4),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            "Iniciar sesión",
-                            style: TextStyle(
+                          onTap: () => Navigator.pushNamed(context, '/login'),
+                          child: Text(
+                            loc.loginButton,
+                            style: const TextStyle(
                               decoration: TextDecoration.underline,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     )
                   ],

@@ -11,6 +11,8 @@
   "loginButton": "Iniciar sesión",
   "loginForgotPassword": "¿Olvidaste tu contraseña?",
   "loginSignup": "¿No tienes una cuenta? Regístrate",
+
+
   "registerTitle": "Crea tu cuenta",
   "registerSubtitle": "Ingresa tus datos para registrate en la plataforma.",
   "registerEmailLabel": "Correo electrónico",
@@ -24,8 +26,11 @@
   "registerPasswordInvalid": "Mínimo 8 caracteres",
   "registerButton": "Registrarse",
   "registerSuccessTitle": "¡Registro exitoso!",
+  "registerFailedTitle": "Registro fallido!",
   "registerLoginOption": "¿Ya tienes una cuenta? ",
   "registerLoginLink": "Iniciar sesión",
+
+
   "passwordResetTitle": "Restablece tu contraseña",
   "passwordResetSubtitle": "No te preocupes, te ayudaremos a restablecer tu contraseña. Enviaremos un enlace a tu correo electrónico.",
   "passwordResetEmailLabel": "Correo electrónico",
@@ -35,6 +40,9 @@
   "passwordResetButton": "Enviar enlace de restablecimiento",
   "passwordResetSuccessTitle": "Se ha enviado un enlace a tu correo",
   "passwordResetSuccessSubtitle": "Por favor revisa tu correo para restablecer tu contraseña. El enlace expirará en 24 horas.",
+  "passwordResetConfirmationTitle": "Entendido",
+
+
   "createProfileTitle": "Crear perfil",
   "createProfileSubtitle": "Ingresa tus datos personales para tu perfil",
   "createProfileFirstNameLabel": "Nombre",
@@ -57,6 +65,8 @@
   "createProfileSuccess": "Perfil creado con éxito",
   "createProfileFailure": "No se pudo crear el perfil",
   "createProfileGenericError": "Error: {error}",
+
+
   "appNavBarPot": "Mis macetas",
   "appNavBarSettings": "Notificaciones",
   "appNavBarLogout": "Perfil",

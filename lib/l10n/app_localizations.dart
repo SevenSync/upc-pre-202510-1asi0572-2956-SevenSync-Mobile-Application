@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Registration successful!'**
   String get registerSuccessTitle;
 
+  /// No description provided for @registerFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed!'**
+  String get registerFailedTitle;
+
   /// No description provided for @registerLoginOption.
   ///
   /// In en, this message translates to:
@@ -307,6 +313,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please check your email to reset your password. The link will expire in 24 hours.'**
   String get passwordResetSuccessSubtitle;
+
+  /// No description provided for @passwordResetConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get passwordResetConfirmationTitle;
 
   /// No description provided for @createProfileTitle.
   ///

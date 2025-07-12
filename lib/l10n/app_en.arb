@@ -26,6 +26,7 @@
   "registerPasswordInvalid": "At least 8 characters",
   "registerButton": "Sign up",
   "registerSuccessTitle": "Registration successful!",
+  "registerFailedTitle": "Registration failed!",
   "registerLoginOption": "Already have an account? ",
   "registerLoginLink": "Log in",
 
@@ -38,6 +39,7 @@
   "passwordResetButton": "Send reset link",
   "passwordResetSuccessTitle": "A link has been sent to your email",
   "passwordResetSuccessSubtitle": "Please check your email to reset your password. The link will expire in 24 hours.",
+  "passwordResetConfirmationTitle": "Got it",
 
   "createProfileTitle": "Create profile",
   "createProfileSubtitle": "Enter your personal information for your profile",
