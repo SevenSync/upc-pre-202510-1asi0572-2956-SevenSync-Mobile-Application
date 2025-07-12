@@ -240,12 +240,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text("Miembro desde abril de 2025"),
-                          SizedBox(height: 16),
-                          Text("4 macetas activas"),
-                          SizedBox(height: 16),
-                          Text("Plan gratuito"),
+                        children: [
+                          Text(loc.profileActiveMemberSince),
+                          const SizedBox(height: 16),
+                          Text("4 "+ loc.profileOwnedPots),
+                          const SizedBox(height: 16),
+                          Text(loc.profileFreePlan),
                         ],
                       ),
                     ],
@@ -255,7 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white),
-                  label: const Text("Actualizar a Premium"),
+                  label: Text(loc.profileUpgradeToPremiumCta),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber.shade600,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -267,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 OutlinedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.description_outlined, color: Colors.green),
-                  label: const Text("Términos y Condiciones", style: TextStyle(color: Colors.green)),
+                  label: Text(loc.profileTAndC, style: const TextStyle(color: Colors.green)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.green),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -281,16 +281,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ExpansionPanel(
                       isExpanded: expandAccount,
-                      headerBuilder: (_, __) => const ListTile(title: Text("Cuenta", style: TextStyle(fontWeight: FontWeight.bold))),
+                      headerBuilder: (_, __) => ListTile(title: Text(loc.profileAccountTitle, style: const TextStyle(fontWeight: FontWeight.bold))),
                       body: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _infoRow("Nombre completo:", profile.fullName),
-                            _infoRow("Correo electrónico:", profile.email),
-                            _infoRow("Número de celular:", profile.phoneNumber),
-                            _infoRow("Dirección:", profile.address),
+                            _infoRow(loc.profileAccountFullName, profile.fullName),
+                            _infoRow(loc.profileAccountEmail, profile.email),
+                            _infoRow(loc.profileAccountPhoneNumber, profile.phoneNumber),
+                            _infoRow(loc.profileAccountAddress, profile.address),
                             const SizedBox(height: 20),
                             Row(
                               children: [
@@ -298,7 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: OutlinedButton.icon(
                                     onPressed: _showChangePasswordDialog,
                                     icon: const Icon(Icons.lock_outline),
-                                    label: const Text("Cambiar Contraseña"),
+                                    label: Text(loc.profileAccountChangePassword),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -306,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: OutlinedButton.icon(
                                     onPressed: () => _showEditDialog(profile),
                                     icon: const Icon(Icons.edit_outlined),
-                                    label: const Text("Editar Perfil"),
+                                    label: Text(loc.profileAccountUpdateProfile),
                                   ),
                                 ),
                               ],
@@ -324,32 +324,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ExpansionPanel(
                       isExpanded: expandNotifications,
-                      headerBuilder: (_, __) => const ListTile(title: Text("Notificaciones", style: TextStyle(fontWeight: FontWeight.bold))),
+                      headerBuilder: (_, __) => ListTile(title: Text(loc.profileNotificationsTitle, style: const TextStyle(fontWeight: FontWeight.bold))),
                       body: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                         child: Column(
                           children: [
                             _notificationOption(
-                              title: "Alertas de riego",
-                              description: "Recibe notificaciones cuando tus plantas necesiten agua",
+                              title: loc.profileNotificationsWateringAlerts,
+                              description: loc.profileNotificationsWateringAlertsDescription,
                               value: wateringAlerts,
                               onChanged: (val) => setState(() => wateringAlerts = val),
                             ),
                             _notificationOption(
-                              title: "Alertas de sensores",
-                              description: "Sensores detecten condiciones anormales",
+                              title: loc.profileNotificationsSensorsAlerts,
+                              description: loc.profileNotificationsSensorsAlertsDescription,
                               value: sensorAlerts,
                               onChanged: (val) => setState(() => sensorAlerts = val),
                             ),
                             _notificationOption(
-                              title: "Reportes semanales",
-                              description: "Resúmenes semanales de tus plantas",
+                              title: loc.profileNotificationsWeeklyReport,
+                              description: loc.profileNotificationsWeeklyReportDescription,
                               value: weeklyReports,
                               onChanged: (val) => setState(() => weeklyReports = val),
                             ),
                             _notificationOption(
-                              title: "Notificaciones por correo",
-                              description: "También por correo electrónico",
+                              title: loc.profileNotificationsByEmail,
+                              description: loc.profileNotificationsByEmailDescription,
                               value: emailNotifications,
                               onChanged: (val) => setState(() => emailNotifications = val),
                             ),
@@ -364,13 +364,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ExpansionPanel(
                       isExpanded: expandBilling,
-                      headerBuilder: (_, __) => const ListTile(title: Text("Facturación", style: TextStyle(fontWeight: FontWeight.bold))),
+                      headerBuilder: (_, __) => ListTile(title: Text(loc.profileBilling, style: const TextStyle(fontWeight: FontWeight.bold))),
                       body: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Plan actual", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(loc.profileCurrentPlan, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             const SizedBox(height: 10),
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -382,12 +382,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 children: [
                                   const Icon(Icons.eco, size: 36, color: Colors.green),
                                   const SizedBox(width: 12),
-                                  const Expanded(
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("Plan gratuito", style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text("Funcionalidades básicas"),
+                                        Text(loc.profileBillingFreePlanTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        Text(loc.profileBillingFreePlanDescription),
                                       ],
                                     ),
                                   ),
@@ -395,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            const Text("Funcionalidades", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(loc.profileFunctionalitiesTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             const SizedBox(height: 10),
                             Container(
                               width: double.infinity,
@@ -404,16 +404,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Column(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("• Máximo de 4 macetas inteligentes"),
-                                  SizedBox(height: 4),
-                                  Text("• Monitoreo básico de sensores"),
-                                  SizedBox(height: 4),
-                                  Text("• Alertas de riego completas"),
-                                  SizedBox(height: 4),
-                                  Text("• Historial de datos hasta por 7 días"),
+                                  Text(loc.profileFunctionalitiesFreePlanOne),
+                                  const SizedBox(height: 4),
+                                  Text(loc.profileFunctionalitiesFreePlanTwo),
+                                  const SizedBox(height: 4),
+                                  Text(loc.profileFunctionalitiesFreePlanThree),
+                                  const SizedBox(height: 4),
+                                  Text(loc.profileFunctionalitiesFreePlanFour),
                                 ],
                               ),
                             ),
@@ -427,7 +427,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 OutlinedButton.icon(
                   onPressed: handleSignOut,
                   icon: const Icon(Icons.logout, color: Colors.red),
-                  label: const Text("Cerrar Sesión", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  label: Text(loc.profileLogout, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.red),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -439,7 +439,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 OutlinedButton.icon(
                   onPressed: handleDeleteAccount,
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  label: const Text("Eliminar Cuenta", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  label: Text(loc.profileDeleteAccount, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.red),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

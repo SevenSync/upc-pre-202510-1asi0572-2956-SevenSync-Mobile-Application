@@ -668,6 +668,12 @@ abstract class AppLocalizations {
   /// **'Billing'**
   String get profileBilling;
 
+  /// No description provided for @profileCurrentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get profileCurrentPlan;
+
   /// No description provided for @profileBillingFreePlanTitle.
   ///
   /// In en, this message translates to:

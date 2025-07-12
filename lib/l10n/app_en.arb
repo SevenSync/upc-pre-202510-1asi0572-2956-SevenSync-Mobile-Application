@@ -105,6 +105,7 @@
   "profileNotificationsByEmailDescription": "Receive notifications by email.",
 
   "profileBilling": "Billing",
+  "profileCurrentPlan": "Current plan",
   "profileBillingFreePlanTitle": "Free plan",
   "profileBillingFreePlanDescription": "Basic features",
   "profileBillingPremiumPlanTitle": "Premium plan",

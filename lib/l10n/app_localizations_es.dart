@@ -311,6 +311,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileBilling => 'Facturación';
 
   @override
+  String get profileCurrentPlan => 'Plan actual';
+
+  @override
   String get profileBillingFreePlanTitle => 'Plan gratuito';
 
   @override

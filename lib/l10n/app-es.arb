@@ -95,6 +95,7 @@
   "profileNotificationsByEmail": "Notificaciones por correo",
   "profileNotificationsByEmailDescription": "Recibe notificaciones por correo electrónico.",
   "profileBilling": "Facturación",
+  "profileCurrentPlan": "Plan actual",
   "profileBillingFreePlanTitle": "Plan gratuito",
   "profileBillingFreePlanDescription": "Funcionalidades básicas",
   "profileBillingPremiumPlanTitle": "Plan premium",

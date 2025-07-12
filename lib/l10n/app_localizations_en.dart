@@ -309,6 +309,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileBilling => 'Billing';
 
   @override
+  String get profileCurrentPlan => 'Current plan';
+
+  @override
   String get profileBillingFreePlanTitle => 'Free plan';
 
   @override
