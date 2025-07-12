@@ -49,7 +49,6 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) => loadProfile());
-    loadProfile();
   }
 
   @override
