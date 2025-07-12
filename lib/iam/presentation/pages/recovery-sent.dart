@@ -1,10 +1,44 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../main.dart'; // Para usar MyApp.setLocale
 
-class RecoveryEmailSentPage extends StatelessWidget {
+class RecoveryEmailSentPage extends StatefulWidget {
   const RecoveryEmailSentPage({super.key});
 
   @override
+  State<RecoveryEmailSentPage> createState() => _RecoveryEmailSentPageState();
+}
+
+class _RecoveryEmailSentPageState extends State<RecoveryEmailSentPage> {
+  String _lang = 'en';
+
+  Widget _languageToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ToggleButtons(
+        borderRadius: BorderRadius.circular(20),
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.green,
+        fillColor: Colors.green.withOpacity(0.1),
+        isSelected: [_lang == 'en', _lang == 'es'],
+        onPressed: (index) {
+          final newLang = index == 0 ? 'en' : 'es';
+          final newLocale = Locale(newLang);
+          setState(() => _lang = newLang);
+          MyApp.setLocale(context, newLocale);
+        },
+        children: const [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('En')),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Es')),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
@@ -15,32 +49,26 @@ class RecoveryEmailSentPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  _languageToggle(),
                   const Icon(Icons.account_circle_outlined, size: 80),
                   const SizedBox(height: 30),
-                  const Text(
-                    "Correo de recuperación enviado",
+                  Text(
+                    loc.passwordResetSuccessTitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                        color: Color(0xFF296244)
+                      color: Color(0xFF296244),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    "Te enviamos una guía para restablecer tu contraseña. Revisa tu bandeja de entrada o la carpeta de spam.",
+                  Text(
+                    loc.passwordResetSuccessSubtitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                   const SizedBox(height: 15),
-                  const Text(
-                    "El enlace tiene una validez de 10 minutos.\nSi no lo recibes o expira, puedes solicitar uno nuevo cada 5 minutos.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
                   const SizedBox(height: 30),
-
-                  // Botón Regresar
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
@@ -48,12 +76,11 @@ class RecoveryEmailSentPage extends StatelessWidget {
                         backgroundColor: const Color(0xFF2ECC71),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login'); // ejemplo
+                        Navigator.pushNamed(context, '/login');
                       },
-                      child: const Text("Entendido"),
+                      child: Text(loc.passwordResetConfirmationTitle),
                     ),
                   ),
-
                 ],
               ),
             ),

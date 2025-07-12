@@ -8,7 +8,7 @@ class ProfileApiService implements ProfileRepository {
 
   @override
   Future<bool> createProfile(UserProfileEntity profile, String token) async {
-    final url = Uri.parse('$_baseUrl/api/profiles/create');
+    final url = Uri.parse('$_baseUrl/api/v1/profiles');
     final response = await http.post(
       url,
       headers: {

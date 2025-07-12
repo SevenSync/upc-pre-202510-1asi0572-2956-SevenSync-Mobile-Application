@@ -18,7 +18,7 @@ class ProfileApiService {
   Future<Map<String, dynamic>> fetchProfile() async {
     final token = await _getToken();
     final response = await http.get(
-      Uri.parse('https://macetech.azurewebsites.net/api/profiles/get'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/profiles/me'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ class ProfileApiService {
     final token = await _getToken();
     final uid = await _getUid();
     final response = await http.get(
-      Uri.parse('https://macetech.azurewebsites.net/api/users/$uid'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/users/$uid'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ class ProfileApiService {
   Future<void> updateProfile(Map<String, dynamic> data) async {
     final token = await _getToken();
     final response = await http.put(
-      Uri.parse('https://macetech.azurewebsites.net/api/profiles/update'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/profilees/me'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ class ProfileApiService {
   Future<void> changePassword(String newPassword) async {
     final token = await _getToken();
     final response = await http.post(
-      Uri.parse('https://macetech.azurewebsites.net/api/users/change-password'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/users/me/password'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ class ProfileApiService {
   Future<void> deleteAccount() async {
     final token = await _getToken();
     final response = await http.delete(
-      Uri.parse('https://macetech.azurewebsites.net/api/users/delete-account'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/users/me'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -94,7 +94,7 @@ class ProfileApiService {
     final token = prefs.getString('token') ?? '';
 
     final response = await http.post(
-      Uri.parse('https://macetech.azurewebsites.net/api/users/sign-out'),
+      Uri.parse('https://macetech.azurewebsites.net/api/v1/auth/logout'),
       headers: { 'Authorization': 'Bearer $token' },
     );
 

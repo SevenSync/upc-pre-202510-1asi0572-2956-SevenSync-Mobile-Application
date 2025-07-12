@@ -8,7 +8,7 @@ class AuthApiService implements AuthRepository {
 
   @override
   Future<Map<String, String>> signIn(UserCredentialsEntity credentials) async {
-    final url = Uri.parse('$_baseUrl/api/users/sign-in');
+    final url = Uri.parse('$_baseUrl/api/v1/auth/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -31,7 +31,7 @@ class AuthApiService implements AuthRepository {
 
   @override
   Future<bool> hasProfile(String token) async {
-    final url = Uri.parse('$_baseUrl/api/profiles/has-profile');
+    final url = Uri.parse('$_baseUrl/api/v1/profiles/me/existence');
     final response = await http.get(
       url,
       headers: {

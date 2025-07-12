@@ -21,24 +21,20 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<void> updateProfile(UserProfileEntity profile) {
-    // 1. Separar datos de dirección
     final addressParts = profile.address.split(',');
     final streetRaw = addressParts.isNotEmpty ? addressParts[0].trim() : '';
     final city = addressParts.length > 1 ? addressParts[1].trim() : '';
     final postalCode = addressParts.length > 2 ? addressParts[2].trim() : '';
 
-    // Separar número de calle
     final streetParts = streetRaw.split(' ');
     final number = streetParts.isNotEmpty ? streetParts.removeLast() : '';
     final street = streetParts.join(' ');
 
-    // 2. Extraer número de teléfono sin código de país
     final digitsOnly = profile.phoneNumber.replaceAll(RegExp(r'\D'), '');
     final phoneNumber = digitsOnly.startsWith('51') && digitsOnly.length > 9
         ? digitsOnly.substring(2)
         : digitsOnly;
 
-    // 3. Armar data final
     final data = {
       'firstName': profile.fullName.split(' ').first,
       'lastName': profile.fullName.split(' ').skip(1).join(' '),

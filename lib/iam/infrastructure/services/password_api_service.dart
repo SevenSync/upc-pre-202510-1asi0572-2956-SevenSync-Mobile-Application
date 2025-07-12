@@ -8,7 +8,7 @@ class PasswordApiService implements PasswordRepository {
 
   @override
   Future<bool> recoverPassword(Email email) async {
-    final url = Uri.parse('$_baseUrl/api/users/password-recovery');
+    final url = Uri.parse('$_baseUrl/api/v1/auth/password-reset/request');
     final response = await http.patch(
       url,
       headers: {'Content-Type': 'application/json'},

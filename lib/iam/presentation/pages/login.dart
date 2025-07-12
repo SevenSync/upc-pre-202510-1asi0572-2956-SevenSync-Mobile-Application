@@ -1,30 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../../../l10n/app_localizations.dart';
 import '../../application/usecases/sign_in_user_usecase.dart';
 import '../../infrastructure/services/auth_api_service.dart';
+import '../../../main.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Registro',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-      ),
-      home: const LoginPage(),
-    );
-  }
-}
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -36,9 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _obscurePassword = true;
-
   final _formKey = GlobalKey<FormState>();
   late final SignInUserUseCase _signInUserUseCase;
+
+  String _lang = 'en'; // idioma por defecto
 
   @override
   void initState() {
@@ -64,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
         final hasProfile = await _signInUserUseCase.checkIfUserHasProfile(token);
 
         if (hasProfile) {
-          Navigator.pushReplacementNamed(context, '/profile');
+          Navigator.pushReplacementNamed(context, '/pot');
         } else {
           Navigator.pushReplacementNamed(context, '/create-profile');
         }
@@ -76,8 +57,34 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Widget _languageToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ToggleButtons(
+        borderRadius: BorderRadius.circular(20),
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.green,
+        fillColor: Colors.green.withOpacity(0.1),
+        isSelected: [_lang == 'en', _lang == 'es'],
+        onPressed: (index) {
+          final newLang = index == 0 ? 'en' : 'es';
+          final newLocale = Locale(newLang);
+
+          setState(() => _lang = newLang);
+          MyApp.setLocale(context, newLocale);
+        },
+        children: const [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('En')),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Es')),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF3EF),
       body: SafeArea(
@@ -90,47 +97,48 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _languageToggle(),
                     const Icon(Icons.account_circle_outlined, size: 80),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Bienvenido de nuevo",
+                    Text(
+                      loc.loginWelcomeTitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF296244),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Ingresa tus credenciales para acceder a tu cuenta",
+                    Text(
+                      loc.loginWelcomeSubtitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     const SizedBox(height: 30),
-                    const Text('Correo electrónico', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(loc.loginEmailLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: emailController,
-                      decoration: const InputDecoration(
-                        hintText: 'ejemplo@correo.com',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: loc.loginEmailLabelExample,
+                        border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'El correo es obligatorio';
+                        if (value == null || value.isEmpty) return loc.loginEmailMandatory;
                         final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        return emailRegex.hasMatch(value) ? null : 'Correo inválido';
+                        return emailRegex.hasMatch(value) ? null : loc.loginEmailInvalid;
                       },
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Contraseña', style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(loc.loginPasswordLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                         TextButton(
                           onPressed: () => Navigator.pushNamed(context, '/recover'),
-                          child: const Text("¿Olvidaste tu contraseña?"),
+                          child: Text(loc.loginForgotPassword),
                         ),
                       ],
                     ),
@@ -145,7 +153,8 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                         ),
                       ),
-                      validator: (value) => value == null || value.isEmpty ? 'La contraseña es obligatoria' : null,
+                      validator: (value) =>
+                      value == null || value.isEmpty ? loc.loginPasswordMandatory : null,
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -154,19 +163,22 @@ class _LoginPageState extends State<LoginPage> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2ECC71)),
                         onPressed: _handleLogin,
-                        child: const Text("Iniciar Sesión", style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(loc.loginButton, style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("¿Aún no tienes una cuenta? "),
+                        const SizedBox(width: 4),
                         GestureDetector(
                           onTap: () => Navigator.pushNamed(context, '/register'),
-                          child: const Text(
-                            "Registrate",
-                            style: TextStyle(decoration: TextDecoration.underline, fontWeight: FontWeight.w500),
+                          child: Text(
+                            loc.loginSignup,
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         )
                       ],
@@ -181,4 +193,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
 

@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../application/usecases/create_profile_usecase.dart';
 import '../../domain/entities/user_profile_entity.dart';
 import '../../infrastructure/services/profile_api_service.dart';
+import '../../../main.dart'; // Para usar MyApp.setLocale
 
 class CreateProfilePage extends StatefulWidget {
   const CreateProfilePage({super.key});
@@ -25,6 +24,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   late final CreateProfileUseCase _createProfileUseCase;
 
+  String _lang = 'en';
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +39,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sesión no válida')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.createProfileInvalidSession)),
         );
         return;
       }
@@ -55,7 +56,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
         firstName: nameController.text.trim(),
         lastName: lastNameController.text.trim(),
         street: street,
-        number: number,
+        buildingNumber: number,
         city: city,
         postalCode: postalCode,
         country: "Perú",
@@ -67,12 +68,12 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
         final success = await _createProfileUseCase.execute(profile, token);
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Perfil creado con éxito')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.createProfileSuccess)),
           );
           Navigator.pushReplacementNamed(context, '/profile');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No se pudo crear el perfil')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.createProfileFailure)),
           );
         }
       } catch (e) {
@@ -83,8 +84,33 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     }
   }
 
+  Widget _languageToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ToggleButtons(
+        borderRadius: BorderRadius.circular(20),
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.green,
+        fillColor: Colors.green.withOpacity(0.1),
+        isSelected: [_lang == 'en', _lang == 'es'],
+        onPressed: (index) {
+          final newLang = index == 0 ? 'en' : 'es';
+          final newLocale = Locale(newLang);
+          setState(() => _lang = newLang);
+          MyApp.setLocale(context, newLocale);
+        },
+        children: const [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('En')),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Es')),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF3EF),
       body: SafeArea(
@@ -97,75 +123,74 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _languageToggle(),
                     const Icon(Icons.account_circle_outlined, size: 80),
                     const SizedBox(height: 20),
-                    const Text(
-                      "Crear perfil",
+                    Text(
+                      loc.createProfileTitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF296244)),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF296244),
+                      ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Ingresa tus datos personales para tu perfil",
+                    Text(
+                      loc.createProfileSubtitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                      style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     const SizedBox(height: 30),
 
-                    // Nombre
-                    const Text("Nombre", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(loc.createProfileFirstNameLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     TextFormField(
                       controller: nameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'John',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Debe agregar un nombre válido' : null,
+                      value == null || value.trim().isEmpty ? loc.createProfileFirstNameMandatory : null,
                     ),
                     const SizedBox(height: 20),
 
-                    // Apellido
-                    const Text("Apellido", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(loc.createProfileLastNameLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     TextFormField(
                       controller: lastNameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Doe',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Debe agregar un apellido válido' : null,
+                      value == null || value.trim().isEmpty ? loc.createProfileLastNameMandatory : null,
                     ),
                     const SizedBox(height: 20),
 
-                    // Dirección
-                    const Text("Dirección", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(loc.createProfileAddressLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     TextFormField(
                       controller: addressController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Av. Alameda Sur 560, Lima, 15067',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Debe agregar una dirección válida';
+                          return loc.createProfileAddressMandatory;
                         }
                         final parts = value.split(',');
                         if (parts.length < 3) {
-                          return 'Formato: calle número, ciudad, postal';
+                          return loc.createProfileAddressFormat;
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 20),
 
-                    // Teléfono
-                    const Text("Número de celular", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(loc.createProfilePhoneLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     Row(
                       children: [
@@ -178,8 +203,6 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                               border: OutlineInputBorder(),
                             ),
                             keyboardType: TextInputType.phone,
-                            validator: (value) =>
-                            value == null || value.trim().isEmpty ? '' : null,
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -194,11 +217,11 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                             keyboardType: TextInputType.phone,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Debe agregar un número de celular válido';
+                                return loc.createProfilePhoneMandatory;
                               }
                               final digits = value.replaceAll(RegExp(r'\D'), '');
                               if (digits.length < 7) {
-                                return 'Número muy corto';
+                                return loc.createProfilePhoneTooShort;
                               }
                               return null;
                             },
@@ -207,16 +230,14 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                       ],
                     ),
                     const SizedBox(height: 30),
-
-                    // Botón Registrarse
                     SizedBox(
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2ECC71),
                         ),
-                        onPressed: _handleCreateProfile ,
-                        child: const Text("Crear Perfil"),
+                        onPressed: _handleCreateProfile,
+                        child: Text(loc.createProfileSubmit),
                       ),
                     ),
                   ],
